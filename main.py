@@ -49,9 +49,9 @@ height = 720
 roi_Area = 250 # 관심영역 크기
 
 # 차체를 가리기위한 상수
-correct_car = 60 
+correct_car = 20 
 
-roi_Area_correct = roi_Area - int(correct_car / 3)
+roi_Area_correct = roi_Area - correct_car
 
 
 # 버드아이뷰 설정
@@ -102,7 +102,7 @@ if __name__ == '__main__':
 
 
         # 관심영역 설정
-        img_roi = img_main[(height - roi_Area):(height - correct_car), 0:width] # -60은 차체를 가리기위한 상수
+        img_roi = img_main[(height - roi_Area):(height-correct_car), 0:width] # -60은 차체를 가리기위한 상수
         
 
          # 트랙바
@@ -120,10 +120,10 @@ if __name__ == '__main__':
         '''
         
         # 버드아이뷰
-        img_bird, Perspect_back = birdeye_view(img_roi, src, dst, (width, height))
+        img_bird, Perspect_back = birdeye_view(img_roi, src, dst, (width, roi_Area_correct))
         
         # 영상처리
-        window = img_process(img_bird, roi_Area_correct, Line, height)
+        window = img_process(img_bird, roi_Area_correct, Line)
         #cv2.imshow('test', window)
 
 

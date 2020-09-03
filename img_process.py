@@ -39,8 +39,8 @@ class line:
         self.window_margin = 40 # 15배수로 설정 권장
 
         # 흰 픽셀 색칠
-        self.left_pixel_color = [255, 0, 0]
-        self.right_pixel_color = [0, 0, 255]
+        self.left_pixel_color = [10, 0, 100]
+        self.right_pixel_color = [100, 0, 10]
 
         # 라인 색칠
         self.left_line_color = (128, 0, 105)
@@ -120,7 +120,7 @@ def draw_lane(window, Line, roi_Area_correct):
 
 
 # 축적된 x값집합의 집합들을 이용해 x좌표의 평균 집합 제작
-def average_line(pre_x, avg_line_num, height):
+def average_line(pre_x, avg_line_num, roi_Area_correct):
 
     # array 합치기
     pre_x = np.squeeze(pre_x) 
@@ -133,7 +133,7 @@ def average_line(pre_x, avg_line_num, height):
 
 
     # y에 대응하는 2차방정식의 x값이기 때문에 y보다 많이 나올수가 없음
-    left_x_avg = np.zeros((height))
+    left_x_avg = np.zeros((roi_Area_correct))
 
     for i, line in enumerate(reversed(pre_x)):
         if i == avg_line_num:
@@ -169,7 +169,7 @@ def binary_image(img_bird, roi_Area_correct, Line):
 
 
 
-def line_detect(img_bird, img_bird_result, roi_Area_correct, Line, height):
+def line_detect(img_bird, img_bird_result, roi_Area_correct, Line):
 
     # 슬라이딩 윈도우 옵션 (높이설정)
     window_height = int(roi_Area_correct / Line.window_num)
@@ -177,6 +177,7 @@ def line_detect(img_bird, img_bird_result, roi_Area_correct, Line, height):
     #window = np.dstack((img_bird_result, img_bird_result, img_bird_result)) * 255
     window = img_bird
     #window = cv2.cvtColor(img_bird_result, cv2.COLOR_GRAY2BGR)
+
 
     # zero가 아닌애들의 인덱스 반환
     nonzero = img_bird_result.nonzero()
@@ -377,7 +378,7 @@ def line_detect(img_bird, img_bird_result, roi_Area_correct, Line, height):
         # 이전 x집합들의 평균값 집합
         #left_x_avg = average_line(Line.left_pre_x, Line.avg_line_num, height)
         
-        left_plot_x = average_line(Line.left_pre_x, Line.avg_line_num, height)
+        left_plot_x = average_line(Line.left_pre_x, Line.avg_line_num, roi_Area_correct)
         
         #left_plot_x = left_x_avg
         '''
@@ -416,7 +417,7 @@ def line_detect(img_bird, img_bird_result, roi_Area_correct, Line, height):
 
     if len(Line.right_pre_x) > Line.avg_line_num:
        
-        right_plot_x = average_line(Line.right_pre_x, Line.avg_line_num, height)
+        right_plot_x = average_line(Line.right_pre_x, Line.avg_line_num, roi_Area_correct)
 
         # 좌표 저장
         Line.plot_right_x = right_plot_x
@@ -455,7 +456,7 @@ def line_detect(img_bird, img_bird_result, roi_Area_correct, Line, height):
 
 
 
-def post_line_detect(img_bird, img_bird_result, roi_Area_correct, Line, height):
+def post_line_detect(img_bird, img_bird_result, roi_Area_correct, Line):
 
     # 값 가져오기
     window_margin = Line.window_margin
@@ -494,8 +495,8 @@ def post_line_detect(img_bird, img_bird_result, roi_Area_correct, Line, height):
     line_rt_y = nonzero_y[win_rt_ind]
 
     # 색칠띠
-    #window[line_lt_y, line_lt_x] = Line.left_pixel_color
-    #window[line_rt_y, line_rt_x] = Line.right_pixel_color
+    window[line_lt_y, line_lt_x] = Line.left_pixel_color
+    window[line_rt_y, line_rt_x] = Line.right_pixel_color
     
 
     # 값 불러오기
@@ -520,7 +521,7 @@ def post_line_detect(img_bird, img_bird_result, roi_Area_correct, Line, height):
     if len(Line.left_pre_x) > Line.avg_line_num:
         
         # 이전 x집합들의 평균값 집합
-        left_plot_x = average_line(Line.left_pre_x, Line.avg_line_num, height)
+        left_plot_x = average_line(Line.left_pre_x, Line.avg_line_num, roi_Area_correct)
         
         # 좌표 저장 (y는 이미 저장함)
         Line.plot_left_x = left_plot_x
@@ -536,7 +537,7 @@ def post_line_detect(img_bird, img_bird_result, roi_Area_correct, Line, height):
 
     if len(Line.right_pre_x) > Line.avg_line_num:
        
-        right_plot_x = average_line(Line.right_pre_x, Line.avg_line_num, height)
+        right_plot_x = average_line(Line.right_pre_x, Line.avg_line_num, roi_Area_correct)
 
         # 좌표 저장
         Line.plot_right_x = right_plot_x
@@ -553,20 +554,20 @@ def post_line_detect(img_bird, img_bird_result, roi_Area_correct, Line, height):
     # 이거는 간소화된 버전이라서, 급작스러울땐 슬라이딩윈도우 사용해야해
     standard = np.std(right_plot_x - left_plot_x)
 
-    if (standard > 100):
+    if (standard > 60):
         Line.detected = False
 
     return window
 
 
-def img_process(img_bird, roi_Area_correct, Line, height):
+def img_process(img_bird, roi_Area_correct, Line):
     
     # 2진화 후 색공간 추출
     img_bird_result = binary_image(img_bird, roi_Area_correct, Line)
 
-    # 라인 검출 안되면, 슬라이딩
+    # 라인 검출 안되면, 혹은 변화가 심하면 슬라이딩
     if Line.detected == False:
-        return line_detect(img_bird, img_bird_result, roi_Area_correct, Line, height)
+        return line_detect(img_bird, img_bird_result, roi_Area_correct, Line)
     # 검출되면 그냥 post루다가
     else:
-        return post_line_detect(img_bird, img_bird_result, roi_Area_correct, Line, height)
+        return post_line_detect(img_bird, img_bird_result, roi_Area_correct, Line)
