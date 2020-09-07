@@ -8,12 +8,9 @@ from img_process import line, birdeye_view, img_process, draw_lane
 
 '''
 도전과제
-1. addWeighted 함수 사용할떄 왜 window_zero와 window_zero_plus의
-    행렬형식이 안맞다고 뜨는지 분석
+1. 리스트에 이전 x좌표들 넣을 때, 비울 방법 생각 
 
-2. 리스트에 이전 x좌표들 넣을 때, 비울 방법 생각 
-
-3. 파라미터를 나중에 일괄 관리하며, 차선에 맞춰 Threshold 조정할수있게 제작
+2. 파라미터를 나중에 일괄 관리하며, 차선에 맞춰 Threshold 조정할수있게 제작
 
 ★★ 아마 밑에가 휘는건 그래프를 그릴때 쓸데없는 y좌표까지 들어가서인듯함 ★★★
 '''
