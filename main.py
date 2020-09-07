@@ -1,7 +1,7 @@
+# <Copyright 2020. ech97. All rights reserved.>
+
 import numpy as np
 import cv2
-import matplotlib.pyplot as plt
-import matplotlib.image as mpimg
 from img_process import line, birdeye_view, img_process, draw_lane
 
 '''
