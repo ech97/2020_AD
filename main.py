@@ -1,3 +1,5 @@
+# Copyright(c)2020 이찬현 All rights reserved.
+
 import numpy as np
 import cv2
 import matplotlib.pyplot as plt
@@ -111,6 +113,7 @@ if __name__ == '__main__':
         mid = cv2.getTrackbarPos('mid', 'ColorTest')
         high = cv2.getTrackbarPos('high', 'ColorTest')
         '''
+        
         '''
         width_Top = cv2.getTrackbarPos('width_Top', 'Warp_Img')
         height_Top = cv2.getTrackbarPos('height_Top', 'Warp_Img')
