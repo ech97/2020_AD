@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 import cv2
 import numpy as np
 
@@ -30,4 +31,3 @@ m = len(lines)
 print("\n\n len(prevx): ", k)
 print("\n len(left_plotx): ", n)
 print("\n len(lines): ", m)
-

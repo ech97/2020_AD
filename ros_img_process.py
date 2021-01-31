@@ -151,7 +151,7 @@ def binary_image(img_bird, roi_Area_correct, Line):
     # 색공간 설정
     img_bird_gray = cv2.cvtColor(img_bird, cv2.COLOR_BGR2GRAY)
     img_bird_hls = cv2.cvtColor(img_bird, cv2.COLOR_BGR2HLS)
-    img_bird_hls = cv2.inRange(img_bird_hls, (6, 120, 65), (100, 255, 255))
+    img_bird_hls = cv2.inRange(img_bird_hls, (16, 142, 35), (100, 255, 255))
 
     #cv2.imshow("ColorTest", img_bird_hls)
 
@@ -530,7 +530,8 @@ def post_line_detect(img_bird, img_bird_result, roi_Area_correct, Line):
 def img_process(img_bird, roi_Area_correct, Line):
 
     # 2진화 후 색공간 추출
-    img_bird_result = binary_image(img_bird, roi_Area_correct, Line)
+    img_bird_result = binary_image(
+        img_bird, roi_Area_correct, Line)
 
     # 라인 검출 안되면, 혹은 변화가 심하면 슬라이딩
     if Line.detected == False:
