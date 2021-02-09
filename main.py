@@ -1,11 +1,9 @@
-# Copyright(c)2020 이찬현 All rights reserved.
+#!/usr/bin/env python
+# <Copyright 2020. ech97. All rights reserved.>
 
 import numpy as np
 import cv2
-import matplotlib.pyplot as plt
-import matplotlib.image as mpimg
 from img_process import line, birdeye_view, img_process, draw_lane
-
 '''
 도전과제
 1. 리스트에 이전 x좌표들 넣을 때, 비울 방법 생각 
@@ -14,7 +12,6 @@ from img_process import line, birdeye_view, img_process, draw_lane
 
 ★★ 아마 밑에가 휘는건 그래프를 그릴때 쓸데없는 y좌표까지 들어가서인듯함 ★★★
 '''
-
 
 
 '''
@@ -45,17 +42,18 @@ wait = 1000 / FPS
 width = 1280
 height = 720
 
-roi_Area = 250 # 관심영역 크기
+roi_Area = 250  # 관심영역 크기
 
 # 차체를 가리기위한 상수
-correct_car = 20 
+correct_car = 20
 
 roi_Area_correct = roi_Area - correct_car
 
 
 # 버드아이뷰 설정
 
-src = np.float32([(0, roi_Area), (0, 0), (0.9 * width, roi_Area), (0.95 * width, 0)])
+src = np.float32(
+    [(0, roi_Area), (0, 0), (0.9 * width, roi_Area), (0.95 * width, 0)])
 dst = np.float32([(480, roi_Area), (0, 0), (815, roi_Area), (width, 0)])
 
 
@@ -81,12 +79,12 @@ def track_bar(width, height):
     cv2.createTrackbar('height_Top', 'Warp_Img', 0, width//2, nothing)
     cv2.createTrackbar('height_Bottom', 'Warp_Img', 0, height, nothing)
 '''
-    
-    
+
+
 if __name__ == '__main__':
 
     #track_bar(width, roi_Area)
-    
+
     cap = cv2.VideoCapture(video_name)
 
     while (cap.isOpened()):
@@ -99,12 +97,11 @@ if __name__ == '__main__':
         height = rows
         width = cols
 
-
         # 관심영역 설정
-        img_roi = img_main[(height - roi_Area):(height-correct_car), 0:width] # -60은 차체를 가리기위한 상수
-        
+        # -60은 차체를 가리기위한 상수
+        img_roi = img_main[(height - roi_Area):(height - correct_car), 0:width]
 
-         # 트랙바
+        # 트랙바
         '''
         low = cv2.getTrackbarPos('low', 'ColorTest')
         mid = cv2.getTrackbarPos('mid', 'ColorTest')
@@ -118,33 +115,31 @@ if __name__ == '__main__':
         height_Bottom = cv2.getTrackbarPos('height_Bottom', 'Warp_Img')
         dst = np.float32([(width_Top, height_Top), (width-width_Top, height_Top), (Width_Bottom, height_Bottom), (width-Width_Bottom, height_Bottom)])
         '''
-        
+
         # 버드아이뷰
-        img_bird, Perspect_back = birdeye_view(img_roi, src, dst, (width, roi_Area_correct))
-        
+        img_bird, Perspect_back = birdeye_view(
+            img_roi, src, dst, (width, roi_Area_correct))
+
         # 영상처리
         window = img_process(img_bird, roi_Area_correct, Line)
         #cv2.imshow('test', window)
-
 
         # 선 긋기
         img_draw = draw_lane(window, Line, roi_Area_correct)
 
         #cv2.imshow('Test', img_draw)
 
-
         # 버드아이뷰 해제
-        img_bird_back = cv2.warpPerspective(img_draw, Perspect_back, (width, height))
+        img_bird_back = cv2.warpPerspective(
+            img_draw, Perspect_back, (width, height))
 
         # 밑에는 검정이니깐 윗부분 크기만큼만 따서
         result = img_bird_back[:roi_Area, :]
-        
 
         # 원본이미지에 갖다붙이기
-        result = np.vstack((img_main[:height-roi_Area, :], result))
+        result = np.vstack((img_main[:height - roi_Area, :], result))
 
         cv2.imshow("Warp_Img", result)
-
 
         # FPS만큼 대기
         if cv2.waitKey(int(wait)) & 0xFF == 27:
