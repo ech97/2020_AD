@@ -1,10 +1,13 @@
 ## 차선인식 프로그램 알고리즘
 
 > 슬라이딩윈도우 및 차선픽셀 검출
+
 ![process](./process.gif)
 
 > polyfit으로 안정적인 차선 검출
+
 ![output](./out.gif)
+
 
 
 ### 목차
